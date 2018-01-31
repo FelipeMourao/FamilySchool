@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">Family School</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">CPF</string>
+    <string name="prompt_password">SENHA</string>
+    <string name="action_sign_in">Login ou Registra-se</string>
+    <string name="action_sign_in_short">Login</string>
+    <string name="error_invalid_email">O CPF é invalido!</string>
+    <string name="error_invalid_password">A senha é muito curto!</string>
+    <string name="error_incorrect_password">a senha é invalida!</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+
+    <!-- Icones do Navagion Drawer -->
+    <string name="action_settings">Configuração</string>
+    <string name="consulta">Consulta</string>
+    <string name="nota">Nota</string>
+    <string name="frequencia">Frequencia</string>
+    <string name="chat">Chat</string>
+    <string name="contatos">Contatos</string>
+    <string name="tarefas">Tarefas</string>
+    <string name="title_activity_signup">Family School</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="title_activity_professor">ProfessorActivity</string>
+    <string name="adicionar_tarefa">Adicionar Tarefa</string>
+    <string name="turmas">Não há turmas cadastradas</string>
+    <string name="text_turma">Turma:</string>
+    <string name="criar_tarefa">CRIAR TAREFA</string>
+    <string name="descricao">Descrição:</string>
+    <string name="anexo">Anexo:</string>
+    <string name="anexar_tarefa">Anexar tarefa</string>
+    <string name="data_de_entrega">Data da Chamada:</string>
+    <string name="nota_inicial">Nota:</string>
+    <string name="data">Selecione a data</string>
+    <string name="SelecionaNota">Selecione a nota</string>
+    <string name="nome">Nome</string>
+    <string name="nota1">Nota 1</string>
+    <string name="nota2">Nota 2</string>
+    <string name="media">Média</string>
+    <string name="enviar">Enviar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="salvar">Salvar</string>
+    <string name="resposta">Resposta:</string>
+    <string name="arquivo">Arquivo</string>
+    <string name="anexar">Anexar</string>
+    <string name="nome_do_aluno">Nome do Aluno:</string>
+    <string name="lancar">Lançar</string>
+    <string name="bimestre">Bimestre:</string>
+    <string name="selecione_a_nota">Selecione a nota</string>
+    <string name="selecione_o_bimestre">Selecione o Bimestre</string>
+    <string name="presenca">Presença</string>
+    <string name="nota_bimestre">Nota</string>
+    <string name="excluir">Excluir</string>
+    <string name="detalhes">Detalhes</string>
+</resources>

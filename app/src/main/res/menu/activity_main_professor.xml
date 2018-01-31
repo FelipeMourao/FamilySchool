@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <!-- Consulta Situação
+        <item android:id="@+id/nav_item_family_consulta"
+            android:icon="@drawable/ic_folder_open"
+            android:title="@string/consulta" />  -->
+        <!-- Nota do aluno -->
+        <item android:id="@+id/nav_item_family_nota"
+              android:icon="@drawable/ic_school"
+              android:title="@string/nota" />
+        <!-- Frequencia do aluno -->
+        <item android:id="@+id/nav_item_family_frequencia"
+              android:icon="@drawable/ic_poll"
+              android:title="@string/frequencia" />
+        <!-- CHAT
+        <item android:id="@+id/nav_item_family_chat"
+              android:icon="@drawable/ic_chat"
+              android:title="@string/chat" />  -->
+        <!-- Contatos
+        <item android:id="@+id/nav_item_family_contatos"
+              android:icon="@drawable/ic_people"
+              android:title="@string/contatos" /> -->
+        <!-- Tarefas -->
+        <item android:id="@+id/nav_item_family_tarefas"
+              android:icon="@drawable/ic_border_color"
+              android:title="@string/tarefas" />
+        <item android:id="@+id/ic_sair"
+            android:icon="@drawable/ic_phonelink_erase"
+            android:title="Sair" />
+    </group>
+</menu>

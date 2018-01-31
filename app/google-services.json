@@ -1,0 +1,58 @@
+{
+  "project_info": {
+    "project_number": "454555641569",
+    "firebase_url": "https://familyschool-aaa4b.firebaseio.com",
+    "project_id": "familyschool-aaa4b",
+    "storage_bucket": "familyschool-aaa4b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454555641569:android:10d9ded515eb0ae3",
+        "android_client_info": {
+          "package_name": "br.com.familyschool.familyschool"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "454555641569-qn0jojkjc0ddm9kg8jl7nk0ilrh5sc9p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.familyschool.familyschool",
+            "certificate_hash": "c376580b5f829f43c932dacb10388397e9ebc260"
+          }
+        },
+        {
+          "client_id": "454555641569-ek1e77e9hhr1im8iutujjvpff1pdj9p7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkUUw-stdLEBxXfhSoG9loh96hAENTMWg"
+        },
+        {
+          "current_key": "AIzaSyDN2RaCp-UBrzj_HzLTZ7x8Oo1WByMQC5o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "454555641569-ek1e77e9hhr1im8iutujjvpff1pdj9p7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
