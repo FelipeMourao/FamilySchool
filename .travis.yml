@@ -53,6 +53,7 @@ install:
     echo no | avdmanager create avd -n acib -k \"$EMULATOR\" -f --abi \"$ABI\" --tag \"$TAG\"
     emulator -avd acib -engine classic -no-window -camera-back none -camera-front none -verbose -qemu -m 512 &
     adb wait-for-device get-serialno
+    travis_wait 30 mvn install
     cd ${TRAVIS_BUILD_DIR}/${DIR} && ./gradlew --version
     cd ${TRAVIS_BUILD_DIR}/${DIR} && ./gradlew clean build
     sdkmanager --list || true
