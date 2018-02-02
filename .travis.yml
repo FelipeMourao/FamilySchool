@@ -24,7 +24,6 @@ before_install:
     echo 'count=0' > /home/travis/.android/repositories.cfg
     
 install: 
-    travis_wait 30 pip install scipy
     sdkmanager --list || true
     sdkmanager --uninstall \"system-images;android-15;default;armeabi-v7a\"
     sdkmanager --uninstall \"system-images;android-16;default;armeabi-v7a\"
@@ -54,6 +53,7 @@ install:
     echo no | avdmanager create avd -n acib -k \"$EMULATOR\" -f --abi \"$ABI\" --tag \"$TAG\"
     emulator -avd acib -engine classic -no-window -camera-back none -camera-front none -verbose -qemu -m 512 &
     adb wait-for-device get-serialno
+    travis_wait mvn install
     cd ${TRAVIS_BUILD_DIR}/${DIR} && ./gradlew --version
     cd ${TRAVIS_BUILD_DIR}/${DIR} && ./gradlew clean build
     sdkmanager --list || true
