@@ -1,55 +1,41 @@
 package br.com.familyschool.familyschool.activity;
 
 import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
 import br.com.familyschool.familyschool.helper.Base64Custom;
 import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.model.Usuario;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
 
-    @InjectView(R.id.email)
-    EditText emailText;
-    @InjectView(R.id.senha)
-    EditText passwordText;
-    @InjectView(R.id.btn_login)
-    Button _loginButton;
-    @InjectView(R.id.link_senha)
-    TextView _signupLink;
-    @InjectView(R.id.link_redifinir)
-    TextView _redefinirLink;
-    @InjectView(R.id.link_cadastro)
-    TextView cadastroLink;
+    private EditText emailText;
+    private EditText passwordText;
+    private Button _loginButton;
+    private TextView _signupLink;
+    private TextView _redefinirLink;
+    private TextView cadastroLink;
     private Usuario usuario;
     private FirebaseAuth autenticacao;
     private DatabaseReference firebase;
@@ -61,7 +47,13 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ButterKnife.inject(this);
+
+        emailText = (EditText) findViewById(R.id.email);
+        passwordText = (EditText) findViewById(R.id.senha);
+        _loginButton = (Button) findViewById(R.id.btn_login);
+        _signupLink = (TextView) findViewById(R.id.link_senha);
+        _redefinirLink = (TextView) findViewById(R.id.link_redifinir);
+        cadastroLink = (TextView) findViewById(R.id.link_cadastro);
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -79,8 +71,13 @@ public class LoginActivity extends AppCompatActivity {
                       usuario = new Usuario();
                       usuario.setEmail(emailText.getText().toString());
                       usuario.setSenha(passwordText.getText().toString());
-                      validarLogin();
-
+                      if(usuario.getEmail().isEmpty() || usuario.getSenha().isEmpty()){
+                          Toast.makeText(LoginActivity.this,"Preencha os campos obrigatorios!",Toast.LENGTH_LONG).show();
+                          _loginButton.setEnabled(true);
+                          progressDialog.dismiss();
+                      }else{
+                          validarLogin();
+                      }
                      }
 
             }
@@ -134,19 +131,23 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Usuario usuarioLogado = dataSnapshot.getValue(Usuario.class);
-                            if (usuarioLogado.getTipoPessoa().equals("Aluno")){
-                                abrirTelaPrincipal();
-                                progressDialog.dismiss();
-                            } else if(usuarioLogado.getTipoPessoa().equals("Responsavel")) {
-                                String identificadorUsuario = Base64Custom.codificarBase64(usuarioLogado.getCodigoAluno());
-                                String identificadorResponsavel = Base64Custom.codificarBase64(usuarioLogado.getEmail());
-                                preferencias.salvarResponsavel(identificadorResponsavel);
-                                preferencias.salvarDados(identificadorUsuario);
-                                responsavelTelaPrincipal();
-                                progressDialog.dismiss();
-                            } else {
-                                professorTelaPrincipal();
-                                progressDialog.dismiss();
+                            switch (usuarioLogado.getTipoPessoa()) {
+                                case "Aluno":
+                                    abrirTelaPrincipal();
+                                    progressDialog.dismiss();
+                                    break;
+                                case "Responsavel":
+                                    String identificadorUsuario = Base64Custom.codificarBase64(usuarioLogado.getCodigoAluno());
+                                    String identificadorResponsavel = Base64Custom.codificarBase64(usuarioLogado.getEmail());
+                                    preferencias.salvarResponsavel(identificadorResponsavel);
+                                    preferencias.salvarDados(identificadorUsuario);
+                                    responsavelTelaPrincipal();
+                                    progressDialog.dismiss();
+                                    break;
+                                default:
+                                    professorTelaPrincipal();
+                                    progressDialog.dismiss();
+                                    break;
                             }
                         }
 

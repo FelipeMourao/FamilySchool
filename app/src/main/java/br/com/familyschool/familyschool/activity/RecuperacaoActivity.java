@@ -2,35 +2,26 @@ package br.com.familyschool.familyschool.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-import java.util.Objects;
-
 import br.com.familyschool.familyschool.Adapter.NotasAdapter;
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
 import br.com.familyschool.familyschool.helper.Preferencias;
-import br.com.familyschool.familyschool.helper.SimpleDividerItemDecoration;
 import br.com.familyschool.familyschool.model.Frequencia;
 import br.com.familyschool.familyschool.model.NotaBimestre;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class RecuperacaoActivity extends AppCompatActivity {
 
-    @InjectView(R.id.btn_cancelar) Button btnCancelar;
+    private Button btnCancelar;
     private String[] itens = {"1º Bimestre","2º Bimestre","3º Bimestre","4º Bimestre","Recuperação"};
     private DatabaseReference firebase;
     private ValueEventListener valueEventListenerAlunos;
@@ -56,7 +47,6 @@ public class RecuperacaoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recuperacao);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
@@ -65,6 +55,8 @@ public class RecuperacaoActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        btnCancelar = (Button) findViewById(R.id.btn_cancelar);
 
         alunos = new ArrayList<>();
         idAlunos = new ArrayList<>();

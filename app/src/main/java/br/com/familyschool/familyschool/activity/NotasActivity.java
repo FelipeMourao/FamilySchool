@@ -8,28 +8,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-
 import br.com.familyschool.familyschool.Adapter.NotasAdapter;
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
 import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.helper.SimpleDividerItemDecoration;
 import br.com.familyschool.familyschool.model.Frequencia;
-import br.com.familyschool.familyschool.model.NotaLancamento;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class NotasActivity extends AppCompatActivity {
 
-    @InjectView(R.id.btn_cancelar) Button btnCancelar;
+    private Button btnCancelar;
     private DatabaseReference firebase;
     private ValueEventListener valueEventListenerAlunos;
     private ArrayList<Frequencia> alunos;
@@ -52,7 +45,6 @@ public class NotasActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notas);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
@@ -61,6 +53,8 @@ public class NotasActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        btnCancelar = (Button) findViewById(R.id.btn_cancelar);
 
         alunos = new ArrayList<>();
 

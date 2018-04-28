@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,10 +65,6 @@ public class AtividadeAlunoFragment extends Fragment {
         tarefaNot = new ArrayList<>();
         turmasEncontrados = new ArrayList<>();
 
-        SimpleDateFormat formataData = new SimpleDateFormat("dd/MM/yyyy");
-        Date data = new Date();
-        final String dataFormatada = formataData.format(data);
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null){
             emailLogado = user.getEmail();
@@ -102,57 +101,63 @@ public class AtividadeAlunoFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Tarefa tarefa = tarefas.get(position);
-                final int comparacaoData = dataFormatada.compareTo(tarefa.getDataEntrega());
-
-                firebase = ConfiguracaoFirebase.getFireBase().child("Usuario").child(identificadorEmailCodificado);
-                firebase.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Usuario usuario = dataSnapshot.getValue(Usuario.class);
-                        if (usuario.getTipoPessoa().equals("Aluno")){
-                            if (tarefa.getUrlConteudo().isEmpty() && comparacaoData <= 0){
-                                Intent intent = new Intent(getActivity(),TarefaAlunoActivity.class);
-                                intent.putExtra("assunto", tarefa.getAssunto());
-                                intent.putExtra("professor", tarefa.getIdProfessor());
-                                intent.putExtra("descricao", tarefa.getDescricao());
-                                intent.putExtra("nota", tarefa.getNota());
-                                intent.putExtra("data", tarefa.getDataEntrega());
-                                intent.putExtra("turma",tarefa.getNomeTurma());
-                                intent.putExtra("urlConteudo", "");
-                                startActivity(intent);
-                            } else if (comparacaoData <= 0){
-                                Intent intent = new Intent(getActivity(),TarefaAlunoActivity.class);
-                                intent.putExtra("assunto", tarefa.getAssunto());
-                                intent.putExtra("professor", tarefa.getIdProfessor());
-                                intent.putExtra("descricao", tarefa.getDescricao());
-                                intent.putExtra("nota", tarefa.getNota());
-                                intent.putExtra("data", tarefa.getDataEntrega());
-                                intent.putExtra("turma",tarefa.getNomeTurma());
-                                intent.putExtra("urlConteudo",tarefa.getUrlConteudo());
-                                startActivity(intent);
-                            } else if (comparacaoData > 0){
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.MyAlertDialogStyle);
-                                builder.setMessage("O Tempo de entrega expirado!");
-                                builder.setCancelable(false);
-                                builder.setPositiveButton("OK", null);
-                                AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
+                final Date date = new Date();
+                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                try {
+                    final Date data = formato.parse(tarefa.getDataEntrega());
+                    firebase = ConfiguracaoFirebase.getFireBase().child("Usuario").child(identificadorEmailCodificado);
+                    firebase.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Usuario usuario = dataSnapshot.getValue(Usuario.class);
+                            if (usuario.getTipoPessoa().equals("Aluno")){
+                                if (tarefa.getUrlConteudo().isEmpty() && date.before(data)){
+                                    Intent intent = new Intent(getActivity(),TarefaAlunoActivity.class);
+                                    intent.putExtra("assunto", tarefa.getAssunto());
+                                    intent.putExtra("professor", tarefa.getIdProfessor());
+                                    intent.putExtra("descricao", tarefa.getDescricao());
+                                    intent.putExtra("nota", tarefa.getNota());
+                                    intent.putExtra("data", tarefa.getDataEntrega());
+                                    intent.putExtra("turma",tarefa.getNomeTurma());
+                                    intent.putExtra("urlConteudo", "");
+                                    startActivity(intent);
+                                } else if (date.before(data)){
+                                    Intent intent = new Intent(getActivity(),TarefaAlunoActivity.class);
+                                    intent.putExtra("assunto", tarefa.getAssunto());
+                                    intent.putExtra("professor", tarefa.getIdProfessor());
+                                    intent.putExtra("descricao", tarefa.getDescricao());
+                                    intent.putExtra("nota", tarefa.getNota());
+                                    intent.putExtra("data", tarefa.getDataEntrega());
+                                    intent.putExtra("turma",tarefa.getNomeTurma());
+                                    intent.putExtra("urlConteudo",tarefa.getUrlConteudo());
+                                    startActivity(intent);
+                                } else if (date.after(data)){
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),R.style.MyAlertDialogStyle);
+                                    builder.setMessage("O Tempo de entrega expirado!");
+                                    builder.setCancelable(false);
+                                    builder.setPositiveButton("OK", null);
+                                    AlertDialog alertDialog = builder.create();
+                                    alertDialog.show();
+                                }
+                            } else if (usuario.getTipoPessoa().equals("Responsavel")){
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("Data da Entrega: " + tarefa.getDataEntrega());
+                                builder.setPositiveButton("OK",null);
+                                AlertDialog dialog = builder.create();
+                                dialog.setTitle("Detalhe");
+                                dialog.show();
                             }
-                        } else if (usuario.getTipoPessoa().equals("Responsavel")){
-                            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("Data da Entrega: " + tarefa.getDataEntrega());
-                            builder.setPositiveButton("OK",null);
-                            AlertDialog dialog = builder.create();
-                            dialog.setTitle("Detalhe");
-                            dialog.show();
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+                        }
+                    });
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 

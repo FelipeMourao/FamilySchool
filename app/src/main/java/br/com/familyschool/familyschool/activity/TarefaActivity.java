@@ -1,15 +1,19 @@
 package br.com.familyschool.familyschool.activity;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,68 +32,70 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.rtoshiro.util.format.MaskFormatter;
-import com.github.rtoshiro.util.format.SimpleMaskFormatter;
-import com.github.rtoshiro.util.format.pattern.MaskPattern;
-import com.github.rtoshiro.util.format.text.MaskTextWatcher;
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
-import br.com.familyschool.familyschool.Adapter.FrequenciaAdapter;
 import br.com.familyschool.familyschool.Adapter.SpinnerAdapter;
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
-import br.com.familyschool.familyschool.helper.Base64Custom;
-import br.com.familyschool.familyschool.helper.NotificationUtil;
 import br.com.familyschool.familyschool.helper.Preferencias;
+import br.com.familyschool.familyschool.model.Frequencia;
 import br.com.familyschool.familyschool.model.Tarefa;
 import br.com.familyschool.familyschool.model.Turma;
 import br.com.familyschool.familyschool.model.Usuario;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import okhttp3.OkHttpClient;
 
 public class TarefaActivity extends AppCompatActivity {
 
-    @InjectView(R.id.edit_assunto)   EditText assunto;
-    @InjectView(R.id.edit_descricao) EditText descricao;
-    @InjectView(R.id.txt_data) TextView txtData;
-    @InjectView(R.id.txt_nota) TextView txtNota;
-    @InjectView(R.id.btn_enviar)  Button botaoEnviar;
-    @InjectView(R.id.btn_cancelar) Button botaoCancelar;
-    @InjectView(R.id.spinner) Spinner spinner;
+    private EditText assunto,descricao;
+    private TextView txtData,txtNota;
+    private Button botaoEnviar,botaoCancelar;
+    private Spinner spinner;
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private ProgressDialog progressDialog;
     private ArrayAdapter adapter;
-    private ArrayList<String> turmas;
+    private ArrayList<String> turmas, idAlunos;
     private DatabaseReference firebase;
-    private ValueEventListener valueEventListenerTurmas;
+    private ValueEventListener valueEventListenerTurmas,valueEventListenerFrequencia;
     private static final int DATE_DIALOG_ID = 0;
-    private String sppinerSelect, urlConteudo,identificadorUsuarioLogado;
+    private String sppinerSelect, urlConteudo,identificadorUsuarioLogado,notaRecebida,descricaoRecebido,dataRecebida,assuntoRecebido;
     Calendar calendario = Calendar.getInstance();
     private String emailLogado;
     private FirebaseAuth autenticacao;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tarefa);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
@@ -99,7 +105,20 @@ public class TarefaActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        assunto = (EditText) findViewById(R.id.edit_assunto);
+        descricao = (EditText) findViewById(R.id.edit_descricao);
+        txtData  = (TextView) findViewById(R.id.txt_data);
+        txtNota  = (TextView) findViewById(R.id.txt_nota);
+        botaoEnviar = (Button) findViewById(R.id.btn_enviar);
+        botaoCancelar = (Button) findViewById(R.id.btn_cancelar);
+        spinner = (Spinner) findViewById(R.id.spinner);
+
         turmas = new ArrayList<>();
+        idAlunos = new ArrayList<>();
+        notaRecebida = "";
+        descricaoRecebido = "";
+        dataRecebida = "";
+        assuntoRecebido = "";
 
         adapter = new SpinnerAdapter(this,R.layout.spinner_text,turmas);
         adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown);
@@ -177,6 +196,7 @@ public class TarefaActivity extends AppCompatActivity {
                 builder.setMessage("Você está criando uma tarefa, gostaria de anexar algum arquivo em seu conteudo?");
                 builder.setCancelable(false);
                 builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         opednFolder();
@@ -184,34 +204,41 @@ public class TarefaActivity extends AppCompatActivity {
                 });
 
                 builder.setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+                    @TargetApi(Build.VERSION_CODES.KITKAT)
+                    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        String notaRecebida = txtNota.getText().toString();
-                        String dataRecebida = txtData.getText().toString();
-                        String assuntoRecebido = assunto.getText().toString();
-                        String descricaoRecebido = descricao.getText().toString();
+                        notaRecebida = txtNota.getText().toString();
+                        dataRecebida = txtData.getText().toString();
+                        assuntoRecebido = assunto.getText().toString();
+                        descricaoRecebido = descricao.getText().toString();
 
-                        Tarefa tarefa = new Tarefa();
-                        tarefa.setAssunto(assuntoRecebido);
-                        tarefa.setDescricao(descricaoRecebido);
-                        tarefa.setIdProfessor(identificadorUsuarioLogado);
-                        tarefa.setNota(notaRecebida);
-                        tarefa.setNomeTurma(sppinerSelect);
-                        tarefa.setDataEntrega(dataRecebida);
-                        tarefa.setUrlConteudo("");
+                        if (assuntoRecebido.isEmpty() || descricaoRecebido.isEmpty() || notaRecebida.isEmpty() || notaRecebida.isEmpty()){
+                            progressDialog.dismiss();
+                            Toast.makeText(TarefaActivity.this,"Alguns Campos não estão preenchidos, Por favor Preencha!",Toast.LENGTH_LONG).show();
 
-                        firebase = ConfiguracaoFirebase.getFireBase();
-                        firebase = firebase.child("Tarefas").child(identificadorUsuarioLogado).child(assuntoRecebido);
-                        firebase.setValue(tarefa);
+                        } else {
 
-                        new android.os.Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.dismiss();
-                                finish();
-                            }
-                        },3000);
+                            Tarefa tarefa = new Tarefa();
+                            tarefa.setAssunto(assuntoRecebido);
+                            tarefa.setDescricao(descricaoRecebido);
+                            tarefa.setIdProfessor(identificadorUsuarioLogado);
+                            tarefa.setNota(notaRecebida);
+                            tarefa.setNomeTurma(sppinerSelect);
+                            tarefa.setDataEntrega(dataRecebida);
+                            tarefa.setUrlConteudo("");
+
+                            firebase = ConfiguracaoFirebase.getFireBase();
+                            firebase = firebase.child("Tarefas").child(identificadorUsuarioLogado).child(assuntoRecebido);
+                            firebase.setValue(tarefa, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    progressDialog.dismiss();
+                                    finish();
+                                }
+                            });
+                        }
                     }
                 });
                 AlertDialog alertDialog = builder.create();
@@ -269,58 +296,68 @@ public class TarefaActivity extends AppCompatActivity {
         txtData.setText(sdf.format(calendario.getTime()));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     public void opednFolder(){
-        Intent intent = new Intent();
-        intent.setType("*/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, 1);
+        if (assunto.getText().toString().isEmpty() || descricao.getText().toString().isEmpty() || txtNota.getText().toString().isEmpty()
+                || txtData.getText().toString().isEmpty()){
+            progressDialog.dismiss();
+            Toast.makeText(TarefaActivity.this,"Alguns Campos não estão preenchidos, Por favor Preencha!",Toast.LENGTH_LONG).show();
+
+        } else {
+            Intent intent = new Intent();
+            intent.setType("*/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(intent, 1);
+        }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (resultCode == RESULT_OK && requestCode == 1){
             StorageReference storageReference = storage.getReferenceFromUrl("gs://familyschool-aaa4b.appspot.com");
             Uri file = data.getData();
-            Log.e("file",file.getPath());
 
             StorageReference fileRef = storageReference.child(sppinerSelect).child(assunto.getText().toString());
+                UploadTask uploadTask = fileRef.putFile(file);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("uploadFail","" + e);
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-            UploadTask uploadTask = fileRef.putFile(file);
+                        Uri downloadUri = taskSnapshot.getDownloadUrl();
+                        notaRecebida = txtNota.getText().toString();
+                        dataRecebida = txtData.getText().toString();
+                        assuntoRecebido = assunto.getText().toString();
+                        descricaoRecebido = descricao.getText().toString();
+                        urlConteudo = downloadUri.toString();
 
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e("uploadFail","" + e);
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri downloadUri = taskSnapshot.getDownloadUrl();
-                    String notaRecebida = txtNota.getText().toString();
-                    String dataRecebida = txtData.getText().toString();
-                    String assuntoRecebido = assunto.getText().toString();
-                    String descricaoRecebido = descricao.getText().toString();
-                    urlConteudo = downloadUri.toString();
+                            Tarefa tarefa = new Tarefa();
+                            tarefa.setAssunto(assuntoRecebido);
+                            tarefa.setDescricao(descricaoRecebido);
+                            tarefa.setIdProfessor(identificadorUsuarioLogado);
+                            tarefa.setNota(notaRecebida);
+                            tarefa.setDataEntrega(dataRecebida);
+                            tarefa.setNomeTurma(sppinerSelect);
+                            tarefa.setUrlConteudo(urlConteudo);
 
-                    Tarefa tarefa = new Tarefa();
-                    tarefa.setAssunto(assuntoRecebido);
-                    tarefa.setDescricao(descricaoRecebido);
-                    tarefa.setIdProfessor(identificadorUsuarioLogado);
-                    tarefa.setNota(notaRecebida);
-                    tarefa.setDataEntrega(dataRecebida);
-                    tarefa.setNomeTurma(sppinerSelect);
-                    tarefa.setUrlConteudo(urlConteudo);
-
-                    firebase = ConfiguracaoFirebase.getFireBase();
-                    firebase = firebase.child("Tarefas").child(identificadorUsuarioLogado).child(assuntoRecebido);
-                    firebase.setValue(tarefa);
-
-                    progressDialog.dismiss();
-                    finish();
-                }
-            });
+                            firebase = ConfiguracaoFirebase.getFireBase();
+                            firebase = firebase.child("Tarefas").child(identificadorUsuarioLogado).child(assuntoRecebido);
+                            firebase.setValue(tarefa, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    progressDialog.dismiss();
+                                    finish();
+                                }
+                            });
+                    }
+                });
+            }
         }
-    }
 
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     private void OnclickNota(){
         final AlertDialog.Builder d = new AlertDialog.Builder(TarefaActivity.this);
         LayoutInflater inflater = this.getLayoutInflater();

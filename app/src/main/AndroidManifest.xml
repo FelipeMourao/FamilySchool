@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="br.com.familyschool.familyschool">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
@@ -22,7 +23,8 @@
         <activity
             android:name=".activity.AberturaActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark">
+            android:theme="@style/AppTheme.Dark"
+            tools:ignore="ExtraText">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -127,7 +129,11 @@
             android:name=".activity.ResponsavelActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.CadastroActivity"
+        <activity
+            android:name=".activity.CadastroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
+        <activity android:name=".activity.SobreActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
     </application>

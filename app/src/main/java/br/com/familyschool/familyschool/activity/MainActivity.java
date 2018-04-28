@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -29,13 +28,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-
 import java.util.ArrayList;
 import br.com.familyschool.familyschool.Adapter.TabAdapter;
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
-import br.com.familyschool.familyschool.fragments.AtividadeFragment;
-import br.com.familyschool.familyschool.fragments.ContatoFragment;
 import br.com.familyschool.familyschool.helper.Base64Custom;
 import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.helper.SlidingTabLayout;
@@ -43,29 +39,28 @@ import br.com.familyschool.familyschool.model.Contato;
 import br.com.familyschool.familyschool.model.Frequencia;
 import br.com.familyschool.familyschool.model.Turma;
 import br.com.familyschool.familyschool.model.Usuario;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    @InjectView(R.id.stl_tabs) SlidingTabLayout slidingTabLayout;
-    @InjectView(R.id.vp_pagina) ViewPager viewPager;
     private DatabaseReference firebase;
     private String identificadorUsuario,identificadorUsuarioLogado,identificadorContato,codigoVerificado,codigoTurma,nomeTurma;
     private View header;
     private NavigationView navigationView;
     private FirebaseAuth autenticacao;
     private ArrayList<String> codigoTurmas;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
+
+        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.stl_tabs);
+        viewPager = (ViewPager) findViewById(R.id.vp_pagina);
 
         TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager());
         viewPager.setAdapter(tabAdapter);
@@ -149,7 +144,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            startActivity(new Intent(this, SobreActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -224,6 +219,7 @@ public class MainActivity extends AppCompatActivity
                     identificadorContato = Base64Custom.codificarBase64(emailContato);
                     codigoVerificado = Base64Custom.codificarBase64(codigoContato);
                     codigoTurmas = new ArrayList<>();
+                    codigoTurma = "";
 
                     //recuperar classe
                     firebase = ConfiguracaoFirebase.getFireBase();

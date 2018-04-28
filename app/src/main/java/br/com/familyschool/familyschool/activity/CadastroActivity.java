@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -20,24 +19,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
 import br.com.familyschool.familyschool.helper.Base64Custom;
 import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.model.Usuario;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class CadastroActivity extends AppCompatActivity {
 
-    @InjectView(R.id.radiogroup) RadioGroup group;
-    @InjectView(R.id.email_aluno) EditText editText;
-    @InjectView(R.id.email_cadastro) EditText emailCadastro;
-    @InjectView(R.id.nome_cadastro) EditText nomeCadastro;
-    @InjectView(R.id.senha_cadastro) EditText senhaCadastro;
-    @InjectView(R.id.btn_enviar) Button enviarCadastro;
-    @InjectView(R.id.btn_cancelar) Button cancelarCadastro;
+    private RadioGroup group;
+    private EditText editText,emailCadastro,nomeCadastro,senhaCadastro;
+    private Button enviarCadastro,cancelarCadastro;
     private String radioTipo;
     private Usuario usuario;
     private FirebaseAuth autenticacao;
@@ -47,7 +39,16 @@ public class CadastroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro);
-        ButterKnife.inject(this);
+
+        group = (RadioGroup) findViewById(R.id.radiogroup);
+        editText = (EditText) findViewById(R.id.email_aluno);
+        emailCadastro = (EditText) findViewById(R.id.email_cadastro);
+        nomeCadastro = (EditText) findViewById(R.id.nome_cadastro);
+        senhaCadastro = (EditText) findViewById(R.id.senha_cadastro);
+        enviarCadastro = (Button) findViewById(R.id.btn_enviar);
+        cancelarCadastro = (Button) findViewById(R.id.btn_cancelar);
+
+
         editText.setVisibility(View.GONE);
         group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -74,23 +75,32 @@ public class CadastroActivity extends AppCompatActivity {
         enviarCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = new ProgressDialog(CadastroActivity.this,
-                        R.style.AppTheme_Dark_Dialog);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setMessage("Cadastrando...");
-                progressDialog.show();
+                    progressDialog = new ProgressDialog(CadastroActivity.this,
+                            R.style.AppTheme_Dark_Dialog);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setMessage("Cadastrando...");
+                    progressDialog.show();
 
-                usuario = new Usuario();
-                usuario.setEmail(emailCadastro.getText().toString());
-                usuario.setNome(nomeCadastro.getText().toString());
-                usuario.setSenha(senhaCadastro.getText().toString());
-                usuario.setTipoPessoa(radioTipo);
-                if (radioTipo.equals("Responsavel")){
-                    usuario.setCodigoAluno(editText.getText().toString());
+                    Preferencias preferencias = new Preferencias(CadastroActivity.this);
+                    String token = preferencias.getToken();
+                    usuario = new Usuario();
+                    usuario.setEmail(emailCadastro.getText().toString());
+                    usuario.setNome(nomeCadastro.getText().toString());
+                    usuario.setSenha(senhaCadastro.getText().toString());
+                    usuario.setTipoPessoa(radioTipo);
+                    usuario.setToken(token);
+                    if (radioTipo.equals("Responsavel")) {
+                        usuario.setCodigoAluno(editText.getText().toString());
+                    } else {
+                        usuario.setCodigoAluno("");
+                    }
+                if(usuario.getTipoPessoa().isEmpty() || emailCadastro.getText().toString().isEmpty() ||
+                        nomeCadastro.getText().toString().isEmpty() || senhaCadastro.getText().toString().isEmpty() ||
+                        radioTipo.isEmpty()){
+                    Toast.makeText(CadastroActivity.this,"Preencha os campos obrigatorios!",Toast.LENGTH_LONG).show();
                 } else {
-                    usuario.setCodigoAluno("");
+                    cadastrarUsuario();
                 }
-                cadastrarUsuario();
             }
         });
 

@@ -20,7 +20,7 @@
 
 
     <!-- Icones do Navagion Drawer -->
-    <string name="action_settings">Configuração</string>
+    <string name="action_settings">Sobre</string>
     <string name="consulta">Consulta</string>
     <string name="nota">Nota</string>
     <string name="frequencia">Frequencia</string>
@@ -39,6 +39,7 @@
     <string name="anexo">Anexo:</string>
     <string name="anexar_tarefa">Anexar tarefa</string>
     <string name="data_de_entrega">Data da Chamada:</string>
+    <string name="data1">Data da Entrega:</string>
     <string name="nota_inicial">Nota:</string>
     <string name="data">Selecione a data</string>
     <string name="SelecionaNota">Selecione a nota</string>
@@ -61,4 +62,31 @@
     <string name="nota_bimestre">Nota</string>
     <string name="excluir">Excluir</string>
     <string name="detalhes">Detalhes</string>
+
+    <string name="material_calendar_monday">S</string>
+    <string name="material_calendar_tuesday">T</string>
+    <string name="material_calendar_wednesday">Q</string>
+    <string name="material_calendar_thursday">Q</string>
+    <string name="material_calendar_friday">S</string>
+    <string name="material_calendar_saturday">S</string>
+    <string name="material_calendar_sunday">D</string>
+
+    <array name="material_calendar_months_array">
+        <item>Janeiro</item>
+        <item>Fevereiro</item>
+        <item>Março</item>
+        <item>Abril</item>
+        <item>Maio</item>
+        <item>Junho</item>
+        <item>Julho</item>
+        <item>Agosto</item>
+        <item>Setembro</item>
+        <item>Outubro</item>
+        <item>Novembro</item>
+        <item>Decembro</item>
+    </array>
+
+    <string name="material_calendar_today_button">Hoje</string>
+    <string name="material_calendar_positive_button">OK</string>
+    <string name="material_calendar_negative_button">Cancelar</string>
 </resources>

@@ -6,33 +6,21 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import br.com.familyschool.familyschool.Adapter.NotasAdapter;
 import br.com.familyschool.familyschool.Adapter.NotasAlunoAdapter;
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
 import br.com.familyschool.familyschool.helper.Preferencias;
-import br.com.familyschool.familyschool.helper.SimpleDividerItemDecoration;
 import br.com.familyschool.familyschool.model.NotaBimestre;
-import br.com.familyschool.familyschool.model.NotaLancamento;
 import br.com.familyschool.familyschool.model.Turma;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class NotasAlunoActivity extends AppCompatActivity {
 
-    @InjectView(R.id.recyclerNotas) RecyclerView list_bim;
+    private RecyclerView list_bim;
     private String txtIdProfessor;
     private DatabaseReference firebase;
     private ArrayList<String> turmas;
@@ -44,7 +32,6 @@ public class NotasAlunoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notas_aluno);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
@@ -53,6 +40,8 @@ public class NotasAlunoActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        list_bim = (RecyclerView) findViewById(R.id.recyclerNotas);
 
         turmas = new ArrayList<>();
         notas = new ArrayList<>();

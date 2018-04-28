@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "br.com.familyschool.familyschool"
         minSdkVersion 15
@@ -18,6 +18,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
@@ -26,13 +27,13 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+    compile 'com.applandeo:material-calendar-view:1.0.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.4.0'
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.github.sundeepk:compact-calendar-view:2.0.2.2'
     compile 'com.google.android.gms:play-services:10.2.6'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
-    compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.google.firebase:firebase-auth:10.2.6'
     compile 'com.google.firebase:firebase-core:10.2.6'
@@ -41,12 +42,10 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.rtoshiro.mflibrary:mflibrary:1.0.0'
     compile 'com.google.firebase:firebase-storage:10.2.6'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.mcxiaoke.volley:library:1.0.0'
+    compile 'com.github.medyo:android-about-page:1.2.4'
     testCompile 'junit:junit:4.12'
 }
-
-
-
-
-
 
 apply plugin: 'com.google.gms.google-services'

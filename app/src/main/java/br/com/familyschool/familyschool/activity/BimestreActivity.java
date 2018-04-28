@@ -9,22 +9,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.fragments.ListaBimestresFragment;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class BimestreActivity extends AppCompatActivity {
 
-    @InjectView(R.id.lv_turmas1) ListView listaBimetres;
+    private ListView listaBimetres;
     private String[] itens = {"1º Bimestre","2º Bimestre","3º Bimestre","4º Bimestre","Recuperação"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bimestre);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
@@ -33,6 +29,8 @@ public class BimestreActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        listaBimetres = (ListView) findViewById(R.id.lv_turmas1);
 
         ArrayAdapter<String> adaptador = new ArrayAdapter<String>(
                 getApplicationContext(),

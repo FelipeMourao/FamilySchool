@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,10 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -30,37 +27,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
 import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.model.NotaTarefa;
-import br.com.familyschool.familyschool.model.Tarefa;
 import br.com.familyschool.familyschool.model.Usuario;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class TarefaAlunoActivity extends AppCompatActivity {
 
-    @InjectView(R.id.txt_assunto) TextView assunto;
-    @InjectView(R.id.txt_professor) TextView professor;
-    @InjectView(R.id.txt_descricao) TextView descricao;
-    @InjectView(R.id.txt_notaTarefa) TextView nota;
-    @InjectView(R.id.txt_data) TextView dataEntrega;
-    @InjectView(R.id.btn_arquivo) Button btnArquivo;
-    @InjectView(R.id.btn_anexar) Button btnAnexar;
-    @InjectView(R.id.btn_enviar) Button btnEnviar;
-    @InjectView(R.id.btn_cancelar) Button btnCancelar;
-    @InjectView(R.id.edit_descricao) EditText respostaAluno;
+    private TextView assunto,professor,descricao,nota,dataEntrega;
+    private Button btnArquivo,btnAnexar,btnCancelar,btnEnviar;
+    private EditText respostaAluno;
     private DatabaseReference firebase;
     private String txtAssunto,txtProfessor,txtDescricao,txtNota,txtEntrega,txtConteudo,turma,downloadAnexo;
     private FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -71,7 +48,18 @@ public class TarefaAlunoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tarefa_aluno);
-        ButterKnife.inject(this);
+
+        assunto = (TextView) findViewById(R.id.txt_assunto);
+        professor = (TextView) findViewById(R.id.txt_professor);
+        descricao = (TextView) findViewById(R.id.txt_descricao);
+        nota = (TextView) findViewById(R.id.txt_notaTarefa);
+        dataEntrega = (TextView) findViewById(R.id.txt_data);
+        btnArquivo = (Button) findViewById(R.id.btn_arquivo);
+        btnAnexar = (Button) findViewById(R.id.btn_anexar);
+        btnEnviar = (Button) findViewById(R.id.btn_enviar);
+        btnCancelar = (Button) findViewById(R.id.btn_cancelar);
+        respostaAluno = (EditText) findViewById(R.id.edit_descricao);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);

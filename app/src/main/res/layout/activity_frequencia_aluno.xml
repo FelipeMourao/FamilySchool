@@ -7,25 +7,15 @@
     android:orientation="vertical"
     tools:context="br.com.familyschool.familyschool.activity.FrequenciaAlunoActivity">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
-
-    <com.github.sundeepk.compactcalendarview.CompactCalendarView
-        android:id="@+id/compactcalendar_view"
-        android:layout_width="fill_parent"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        android:layout_height="250dp"
-        app:compactCalendarTargetHeight="250dp"
-        app:compactCalendarTextSize="12sp"
-        app:compactCalendarBackgroundColor="#80FFFFFF"
-        app:compactCalendarTextColor="@color/black"
-        app:compactCalendarCurrentSelectedDayBackgroundColor="#80FFFFFF"
-        app:compactCalendarEventIndicatorStyle="fill_large_indicator"
-        app:compactCalendarCurrentDayBackgroundColor="#80FFFFFF"
-        app:compactCalendarMultiEventIndicatorColor="#0fe91a"
-        />
+    <com.applandeo.materialcalendarview.CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        app:headerColor="@color/primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_marginTop="10dp"
@@ -34,7 +24,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:background="@drawable/background_presenca"
+            android:background="@drawable/ic_star"
             android:layout_marginLeft="30dp"
             android:layout_marginStart="30dp"
             android:layout_width="40dp"

@@ -14,6 +14,7 @@ public class Usuario {
     private String senha;
     private String tipoPessoa;
     private String CodigoAluno;
+    private String token;
 
     public Usuario() {
     }
@@ -71,5 +72,13 @@ public class Usuario {
 
     public void setCodigoAluno(String codigoAluno) {
         CodigoAluno = codigoAluno;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

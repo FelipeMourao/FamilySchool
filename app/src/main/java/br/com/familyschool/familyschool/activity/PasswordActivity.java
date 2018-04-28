@@ -11,28 +11,25 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-
 import br.com.familyschool.familyschool.R;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class PasswordActivity extends AppCompatActivity {
 
-    @InjectView(R.id.email_enviar) EditText email;
-    @InjectView(R.id.btnEnviarEmail) Button _enviarEmail;
+    private EditText email;
+    private Button _enviarEmail;
     private FirebaseAuth autenticacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password);
-        ButterKnife.inject(this);
+
+        email = (EditText) findViewById(R.id.email_enviar);
+        _enviarEmail = (Button) findViewById(R.id.btnEnviarEmail);
 
         autenticacao = FirebaseAuth.getInstance();
 

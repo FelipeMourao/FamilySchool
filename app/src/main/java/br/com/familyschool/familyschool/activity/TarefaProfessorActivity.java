@@ -3,7 +3,6 @@ package br.com.familyschool.familyschool.activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,30 +10,21 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-
-import br.com.familyschool.familyschool.Adapter.FrequenciaAdapter;
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
 import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.model.Frequencia;
 import br.com.familyschool.familyschool.model.NotaTarefa;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class TarefaProfessorActivity extends AppCompatActivity {
 
-    @InjectView(R.id.txt_assunto_professor) TextView assunto;
-    @InjectView(R.id.txt_data_professor) TextView dataEntrega;
-    @InjectView(R.id.txt_nota_professor) TextView nota;
-    @InjectView(R.id.list_alunos) ListView listaAlunos;
+    private TextView assunto,dataEntrega,nota;
+    private ListView listaAlunos;
     private String txtAssunto, txtNota,txtData,txtTurma;
     private DatabaseReference firebase;
     private ArrayList<String> alunos, alunosEntrega;
@@ -44,7 +34,6 @@ public class TarefaProfessorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tarefa_professor);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
@@ -53,6 +42,11 @@ public class TarefaProfessorActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        assunto = (TextView) findViewById(R.id.txt_assunto_professor);
+        dataEntrega = (TextView) findViewById(R.id.txt_data_professor);
+        nota = (TextView) findViewById(R.id.txt_nota_professor);
+        listaAlunos = (ListView) findViewById(R.id.list_alunos);
 
         alunos = new ArrayList<>();
         alunosEntrega = new ArrayList<>();

@@ -1,5 +1,6 @@
 package br.com.familyschool.familyschool.activity;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -21,14 +22,11 @@ import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-
 import br.com.familyschool.familyschool.Adapter.SpinnerAdapter;
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
@@ -36,30 +34,24 @@ import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.model.NotaLancamento;
 import br.com.familyschool.familyschool.model.NotaTarefa;
 import br.com.familyschool.familyschool.model.Usuario;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class LancamentoActivity extends AppCompatActivity {
 
-    @InjectView(R.id.txt_titulo)  TextView titulo;
-    @InjectView(R.id.txt_nome_aluno)  TextView nomeAluno;
-    @InjectView(R.id.txt_nota_aluno)  TextView notaAluno;
-    @InjectView(R.id.spinner) Spinner bimestreAluno;
-    @InjectView(R.id.txt_resposta)  TextView respostaAluno;
-    @InjectView(R.id.btn_resposta) Button btnResposta;
-    @InjectView(R.id.btn_lancar) Button btnLancar;
-    @InjectView(R.id.btn_cancelar) Button btnCancelar;
+    private TextView titulo, nomeAluno,notaAluno;
+    private Spinner bimestreAluno;
+    private TextView respostaAluno;
+    private Button btnResposta, btnLancar,btnCancelar;
     private String txtIdAluno, txtTurma,txtNota, txtConteudo, bimestreSelecionado;
     private ArrayList<String> idAluno;
     private ProgressDialog progressDialog;
     private ArrayAdapter adapter;
     private DatabaseReference firebase;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lancamento);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
@@ -68,6 +60,15 @@ public class LancamentoActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        titulo = (TextView) findViewById(R.id.txt_titulo);
+        nomeAluno = (TextView) findViewById(R.id.txt_nome_aluno);
+        notaAluno = (TextView) findViewById(R.id.txt_nota_aluno);
+        bimestreAluno = (Spinner) findViewById(R.id.spinner);
+        respostaAluno = (TextView) findViewById(R.id.txt_resposta);
+        btnResposta = (Button) findViewById(R.id.btn_resposta);
+        btnLancar = (Button) findViewById(R.id.btn_lancar);
+        btnCancelar = (Button) findViewById(R.id.btn_cancelar);
 
         idAluno = new ArrayList<>();
         ArrayList<String> bimestres = new ArrayList<String>();

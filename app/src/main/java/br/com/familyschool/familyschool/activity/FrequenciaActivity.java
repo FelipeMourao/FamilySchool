@@ -18,31 +18,26 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
+import com.google.firebase.messaging.FirebaseMessaging;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
 import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.model.Faltas;
 import br.com.familyschool.familyschool.model.Frequencia;
 import br.com.familyschool.familyschool.model.Usuario;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class FrequenciaActivity extends AppCompatActivity {
 
-    @InjectView(R.id.txt_data) TextView txtData;
-    @InjectView(R.id.btn_salvar) Button botaoSalvar;
-    @InjectView(R.id.btn_cancelar) Button botatoCancelar;
+    private TextView txtData;
+    private Button botaoSalvar, botatoCancelar;
     Calendar calendario = Calendar.getInstance();
     private static final int DATE_DIALOG_ID = 0;
     private String identificadorProfessorUsuario,turmaAlunoUsuario, TimeInMillis;
@@ -70,10 +65,16 @@ public class FrequenciaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_frequencia);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
+
+        txtData = (TextView) findViewById(R.id.txt_data);
+        botaoSalvar = (Button) findViewById(R.id.btn_salvar);
+        botatoCancelar = (Button) findViewById(R.id.btn_cancelar);
+
+        FirebaseMessaging.getInstance().subscribeToTopic("Notificacao");
+
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -102,48 +103,52 @@ public class FrequenciaActivity extends AppCompatActivity {
         botaoSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = new ProgressDialog(FrequenciaActivity.this,
-                        R.style.AppTheme_Dark_Dialog);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setMessage("Salvando...");
-                progressDialog.show();
+                if (txtData.getText().toString().isEmpty()){
+                    Toast.makeText(FrequenciaActivity.this,"Selecione a Data",Toast.LENGTH_LONG).show();
+                } else {
+                    progressDialog = new ProgressDialog(FrequenciaActivity.this,
+                            R.style.AppTheme_Dark_Dialog);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setMessage("Salvando...");
+                    progressDialog.show();
 
-                Preferencias preferencias = new Preferencias(FrequenciaActivity.this);
-                String identificadorUsuarioLogado = preferencias.getIdentificador();
-                String data = txtData.getText().toString();
-                for(String usuarioEncontrado : idUsuarios){
-                    for (String Usuario : selecaoPresencas){
-                        if (Usuario.equals(usuarioEncontrado)){
-                            firebase = ConfiguracaoFirebase.getFireBase().child("Presenca").child(identificadorUsuarioLogado);
-                            firebase = firebase.child(turmaAlunoUsuario).child(usuarioEncontrado).child(TimeInMillis);
+                    Preferencias preferencias = new Preferencias(FrequenciaActivity.this);
+                    String identificadorUsuarioLogado = preferencias.getIdentificador();
+                    String data = txtData.getText().toString();
+                    for(String usuarioEncontrado : idUsuarios){
+                        for (String Usuario : selecaoPresencas){
+                            if (Usuario.equals(usuarioEncontrado)){
+                                firebase = ConfiguracaoFirebase.getFireBase().child("Presenca").child(identificadorUsuarioLogado);
+                                firebase = firebase.child(turmaAlunoUsuario).child(usuarioEncontrado).child(TimeInMillis);
 
-                            Faltas faltas = new Faltas();
-                            faltas.setDataUsuario(data);
-                            faltas.setNomeUsuario(usuarioEncontrado);
-                            faltas.setTimeInMillis(TimeInMillis);
+                                Faltas faltas = new Faltas();
+                                faltas.setDataUsuario(data);
+                                faltas.setNomeUsuario(usuarioEncontrado);
+                                faltas.setTimeInMillis(TimeInMillis);
 
-                            firebase.setValue(faltas);
+                                firebase.setValue(faltas);
+                            }
                         }
                     }
-                }
 
-                new android.os.Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDialog.dismiss();
-                        AlertDialog.Builder builder = new AlertDialog.Builder(FrequenciaActivity.this,R.style.MyAlertDialogStyle);
-                        builder.setMessage("Frêquencia Salva com Sucesso!");
-                        builder.setCancelable(false);
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-                            }
-                        });
-                        AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
-                    }
-                },5000);
+                    new android.os.Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(FrequenciaActivity.this,R.style.MyAlertDialogStyle);
+                            builder.setMessage("Frêquencia Salva com Sucesso!");
+                            builder.setCancelable(false);
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            });
+                            AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                        }
+                    },5000);
+                }
             }
         });
 

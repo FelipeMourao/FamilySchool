@@ -10,15 +10,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-
-import br.com.familyschool.familyschool.Adapter.ContatoAdapter;
 import br.com.familyschool.familyschool.Adapter.FrequenciaAdapter;
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
@@ -26,12 +22,10 @@ import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.model.Contato;
 import br.com.familyschool.familyschool.model.Frequencia;
 import br.com.familyschool.familyschool.model.Turma;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class ListaProfessorActivity extends AppCompatActivity {
 
-    @InjectView(R.id.list_professores) ListView listView;
+    private ListView listView;
     private DatabaseReference firebase;
     private ValueEventListener valueEventListenerContatos;
     private ArrayList<String> contatos;
@@ -43,7 +37,6 @@ public class ListaProfessorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_professor);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
@@ -53,6 +46,7 @@ public class ListaProfessorActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        listView = (ListView) findViewById(R.id.list_professores);
         contatos = new ArrayList<>();
         turmas = new ArrayList<>();
 

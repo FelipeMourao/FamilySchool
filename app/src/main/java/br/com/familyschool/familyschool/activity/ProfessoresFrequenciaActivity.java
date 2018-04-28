@@ -1,6 +1,5 @@
 package br.com.familyschool.familyschool.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,12 +22,10 @@ import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.model.Contato;
 import br.com.familyschool.familyschool.model.Frequencia;
 import br.com.familyschool.familyschool.model.Turma;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class ProfessoresFrequenciaActivity extends AppCompatActivity {
 
-    @InjectView(R.id.list_professores) ListView listView;
+    private ListView listView;
     private DatabaseReference firebase;
     private ValueEventListener valueEventListenerContatos;
     private ArrayList<String> contatos;
@@ -40,7 +37,6 @@ public class ProfessoresFrequenciaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_professores_frequencia);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
@@ -49,6 +45,8 @@ public class ProfessoresFrequenciaActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        listView = (ListView) findViewById(R.id.list_professores);
 
         contatos = new ArrayList<>();
         turmas = new ArrayList<>();

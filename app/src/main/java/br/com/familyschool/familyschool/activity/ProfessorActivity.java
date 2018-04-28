@@ -1,13 +1,9 @@
 package br.com.familyschool.familyschool.activity;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -24,34 +20,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.Random;
-
+import com.google.firebase.messaging.FirebaseMessaging;
 import br.com.familyschool.familyschool.Adapter.ProfessorAdapter;
-import br.com.familyschool.familyschool.Adapter.TabAdapter;
 import br.com.familyschool.familyschool.R;
 import br.com.familyschool.familyschool.config.ConfiguracaoFirebase;
-import br.com.familyschool.familyschool.fragments.AtividadeFragment;
 import br.com.familyschool.familyschool.helper.Base64Custom;
-import br.com.familyschool.familyschool.helper.Preferencias;
 import br.com.familyschool.familyschool.helper.SlidingTabLayout;
-import br.com.familyschool.familyschool.model.Contato;
 import br.com.familyschool.familyschool.model.Turma;
 import br.com.familyschool.familyschool.model.Usuario;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class ProfessorActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    @InjectView(R.id.stl_tabs) SlidingTabLayout slidingTabLayout;
-    @InjectView(R.id.vp_pagina) ViewPager viewPager;
+    private SlidingTabLayout slidingTabLayout;
+    private ViewPager viewPager;
     private DatabaseReference firebase;
     private String identificadorUsuario,identificadorUsuarioLogado;
     private View header;
@@ -63,10 +50,12 @@ public class ProfessorActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_professor);
-        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Family School");
         setSupportActionBar(toolbar);
+
+        slidingTabLayout = (SlidingTabLayout) findViewById(R.id.stl_tabs);
+        viewPager = (ViewPager) findViewById(R.id.vp_pagina);
 
         ProfessorAdapter professorAdapter = new ProfessorAdapter(getSupportFragmentManager());
         viewPager.setAdapter(professorAdapter);
@@ -148,6 +137,7 @@ public class ProfessorActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         switch (id){
             case R.id.action_settings:
+                startActivity(new Intent(this, SobreActivity.class));
                 break;
             case R.id.adicionar_tarefa:
                 Intent TarefaIntent = new Intent(ProfessorActivity.this, TarefaActivity.class);
@@ -228,6 +218,7 @@ public class ProfessorActivity extends AppCompatActivity
                     firebase = firebase.child("Classe").child(identificadorUsuarioLogado).child(nometurma);
                     firebase.setValue(turma);
 
+                    FirebaseMessaging.getInstance().subscribeToTopic("NotificacaoPresenca");
                 }
                 dialog.dismiss();
 
